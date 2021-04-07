@@ -1,23 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import fetch from 'node-fetch';
 
-function App() {
+const App = () => {
+  const [cards, setCards] = useState([]);
+  useEffect(() => {
+    fetch("/random-pool").then(res => res.json()).then(json => setCards(json.cards));
+  }, []);
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {cards.map((card) => (
+        <div>{card.name}</div>
+      ))}
+      {cards.map((card) => (
+        <img style={{"max-width": 300}} src={card.img_uri} />
+      ))}
     </div>
   );
 }

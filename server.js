@@ -6,9 +6,30 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'client/build/')));
 
 const scryfallBase = "https://api.scryfall.com";
+const scryfallJSON = "https://c2.scryfall.com/file/scryfall-bulk/oracle-cards/oracle-cards-20210406210457.json";
+
+let cardDB = [];
+
+fetch(scryfallJSON)
+  .then(res => res.json())
+  .then(json => {
+    cardDB = json;
+  });
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+app.get('/random-pool', (req, res) => {
+  let cards = [];
+  for (let i = 0; i < 10; i++) {
+    let randomCard = cardDB[Math.floor(Math.random() * cardDB.length)];
+    cards.push({
+      name: randomCard.name,
+      img_uri: randomCard.image_uris.normal,
+    });
+  }
+  res.send({ cards });
 });
 
 app.get('/test', (req, res) => {
