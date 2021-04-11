@@ -5,14 +5,14 @@ const fetch = require('node-fetch');
 const app = express();
 app.use(express.static(path.join(__dirname, 'client/build/')));
 
-const scryfallBase = "https://api.scryfall.com";
-const scryfallJSON = "https://c2.scryfall.com/file/scryfall-bulk/oracle-cards/oracle-cards-20210406210457.json";
+const scryfallBase = 'https://api.scryfall.com';
+const scryfallJSON = 'https://c2.scryfall.com/file/scryfall-bulk/oracle-cards/oracle-cards-20210406210457.json';
 
 let cardDB = [];
 
 fetch(scryfallJSON)
-  .then(res => res.json())
-  .then(json => {
+  .then((res) => res.json())
+  .then((json) => {
     cardDB = json;
   });
 
@@ -21,9 +21,9 @@ app.get('/', (req, res) => {
 });
 
 app.get('/random-pool', (req, res) => {
-  let cards = [];
+  const cards = [];
   for (let i = 0; i < 10; i++) {
-    let randomCard = cardDB[Math.floor(Math.random() * cardDB.length)];
+    const randomCard = cardDB[Math.floor(Math.random() * cardDB.length)];
     cards.push({
       name: randomCard.name,
       img_uri: randomCard.image_uris.normal,
@@ -34,9 +34,9 @@ app.get('/random-pool', (req, res) => {
 
 app.get('/test', (req, res) => {
   fetch(`${scryfallBase}/cards/search?q=vindicate`)
-    .then(scryRes => scryRes.json())
-    .then(json => res.send(json));
-})
+    .then((scryRes) => scryRes.json())
+    .then((json) => res.send(json));
+});
 
 app.get('/ping', (req, res) => res.send('pong'));
 
