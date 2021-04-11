@@ -13,6 +13,8 @@ module.exports = {
   },
   plugins: ['react', 'prettier'],
   rules: {
+    // Only ok in server files
+    'no-console': 0,
     // Allow braces around return-only arrow functions, for better readability
     'arrow-body-style': 0,
     // Allow arrow functions without return statements
