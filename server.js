@@ -32,7 +32,19 @@ const sortedCardDB = {
     GU: [],
     other: [],
   },
-  land: [],
+  land: {
+    UW: [],
+    BU: [],
+    BR: [],
+    GR: [],
+    GW: [],
+    BW: [],
+    RU: [],
+    BG: [],
+    RW: [],
+    GU: [],
+    other: [],
+  },
 };
 
 const filterLegalCards = (card) => {
@@ -47,7 +59,11 @@ const filterLegalCards = (card) => {
 
 const sortCards = (card) => {
   if (/^Land.*/i.test(card.type_line)) {
-    sortedCardDB.land.push(card);
+    if (card.color_identity.length === 2) {
+      sortedCardDB.land[card.color_identity.join('')].push(card);
+    } else {
+      sortedCardDB.land.other.push(card);
+    }
   } else {
     switch (card.color_identity.length) {
       case 0:
@@ -95,18 +111,21 @@ const getRandomCards = (list, n) => {
   return randomNums.map((randomNum) => list[randomNum]);
 };
 
-const getRandomMulticolorCards = (n) => [
-  ...getRandomCards(sortedCardDB.multicolor.UW, n),
-  ...getRandomCards(sortedCardDB.multicolor.BU, n),
-  ...getRandomCards(sortedCardDB.multicolor.BR, n),
-  ...getRandomCards(sortedCardDB.multicolor.GR, n),
-  ...getRandomCards(sortedCardDB.multicolor.GW, n),
-  ...getRandomCards(sortedCardDB.multicolor.BW, n),
-  ...getRandomCards(sortedCardDB.multicolor.RU, n),
-  ...getRandomCards(sortedCardDB.multicolor.BG, n),
-  ...getRandomCards(sortedCardDB.multicolor.RW, n),
-  ...getRandomCards(sortedCardDB.multicolor.GU, n),
-];
+const getRandomMulticolorCards = (n, lands = false) => {
+  const dbToUse = lands ? sortedCardDB.land : sortedCardDB.multicolor;
+  return [
+    ...getRandomCards(dbToUse.UW, n),
+    ...getRandomCards(dbToUse.BU, n),
+    ...getRandomCards(dbToUse.BR, n),
+    ...getRandomCards(dbToUse.GR, n),
+    ...getRandomCards(dbToUse.GW, n),
+    ...getRandomCards(dbToUse.BW, n),
+    ...getRandomCards(dbToUse.RU, n),
+    ...getRandomCards(dbToUse.BG, n),
+    ...getRandomCards(dbToUse.RW, n),
+    ...getRandomCards(dbToUse.GU, n),
+  ];
+};
 
 fetch(scryfallJSON)
   .then((res) => res.json())
@@ -133,7 +152,8 @@ app.get('/random-pool', (req, res) => {
       ...getRandomCards(sortedCardDB.colorless, 10),
       ...getRandomMulticolorCards(2),
       ...getRandomCards(sortedCardDB.multicolor.other, 3),
-      ...getRandomCards(sortedCardDB.land, 10),
+      ...getRandomMulticolorCards(2, true),
+      ...getRandomCards(sortedCardDB.land.other, 5),
     ].map(formatCardsAsJSON);
     res.send({ cards });
   }
