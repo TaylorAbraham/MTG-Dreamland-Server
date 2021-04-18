@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import fetch from 'node-fetch';
 import { TextField, Snackbar, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
@@ -8,11 +8,25 @@ const App = () => {
   const [cards, setCards] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
 
-  useEffect(() => {
+  const fetchPool = useCallback(() => {
     fetch('/random-pool')
       .then((res) => res.json())
-      .then((json) => setCards(json.cards));
+      .then((json) => {
+        if (json.error) {
+          if (json.error.type === 'SERVER_NOT_STARTED') {
+            setTimeout(() => {
+              fetchPool();
+            }, 2000);
+          }
+        } else {
+          setCards(json.cards);
+        }
+      });
   }, []);
+
+  useEffect(() => {
+    fetchPool();
+  }, [fetchPool]);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {

@@ -105,7 +105,7 @@ app.get('/', (req, res) => {
 
 app.get('/random-pool', (req, res) => {
   if (startingUp) {
-    res.status(503).send({ error: { msg: 'Server has not finished started up.', type: 'SERVER_NOT_STARTED' } });
+    res.status(500).send({ error: { msg: 'Server has not finished started up.', type: 'SERVER_NOT_STARTED' } });
   }
 
   const cards = [
