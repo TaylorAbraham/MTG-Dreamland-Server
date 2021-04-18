@@ -75,6 +75,7 @@ const formatCardsAsJSON = (card) => {
   }
   return {
     name: card.name,
+    scryfallURI: card.scryfall_uri,
     imgURI,
   };
 };
@@ -106,18 +107,18 @@ app.get('/', (req, res) => {
 app.get('/random-pool', (req, res) => {
   if (startingUp) {
     res.status(500).send({ error: { msg: 'Server has not finished started up.', type: 'SERVER_NOT_STARTED' } });
+  } else {
+    const cards = [
+      ...getRandomCards(sortedCardDB.W, 10),
+      ...getRandomCards(sortedCardDB.U, 10),
+      ...getRandomCards(sortedCardDB.B, 10),
+      ...getRandomCards(sortedCardDB.R, 10),
+      ...getRandomCards(sortedCardDB.G, 10),
+      ...getRandomCards(sortedCardDB.colorless, 10),
+      ...getRandomCards(sortedCardDB.land, 10),
+    ].map(formatCardsAsJSON);
+    res.send({ cards });
   }
-
-  const cards = [
-    ...getRandomCards(sortedCardDB.W, 10),
-    ...getRandomCards(sortedCardDB.U, 10),
-    ...getRandomCards(sortedCardDB.B, 10),
-    ...getRandomCards(sortedCardDB.R, 10),
-    ...getRandomCards(sortedCardDB.G, 10),
-    ...getRandomCards(sortedCardDB.colorless, 10),
-    ...getRandomCards(sortedCardDB.land, 10),
-  ].map(formatCardsAsJSON);
-  res.send({ cards });
 });
 
 app.get('/test', (req, res) => {

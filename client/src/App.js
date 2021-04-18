@@ -34,6 +34,7 @@ const App = () => {
     }
     setSnackbarOpen(false);
   };
+  console.log('### cards', cards);
 
   return (
     <div className="App">
@@ -55,8 +56,9 @@ const App = () => {
             />
           </div>
           {cards.map((card) => (
-            <img className="card-pic" alt={card.name} src={card.imgURI} />
-            // TODO: Image should link to scryfall page in new tab
+            <a key={card.name} href={card.scryfallURI} target="_blank" rel="noreferrer">
+              <img className="card-pic" alt={card.name} src={card.imgURI} />
+            </a>
           ))}
           <Snackbar
             anchorOrigin={{
