@@ -34,7 +34,6 @@ const App = () => {
     }
     setSnackbarOpen(false);
   };
-  console.log('### cards', cards);
 
   return (
     <div className="App">

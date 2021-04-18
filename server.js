@@ -39,11 +39,14 @@ const filterLegalCards = (card) => {
   if (card.legalities.vintage === 'not_legal') {
     return false;
   }
+  if (/^Basic Land.*/i.test(card.type_line)) {
+    return false;
+  }
   return true;
 };
 
 const sortCards = (card) => {
-  if (/^Land.*/.test(card.type_line)) {
+  if (/^Land.*/i.test(card.type_line)) {
     sortedCardDB.land.push(card);
   } else {
     switch (card.color_identity.length) {
