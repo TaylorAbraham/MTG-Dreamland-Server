@@ -16,6 +16,7 @@ const App = () => {
   const fetchPool = useCallback(() => {
     let fetchURL = '/random-pool';
     if (uuidParam) {
+      setPoolUUID(uuidParam);
       fetchURL = `/random-pool/${uuidParam}`;
     }
     fetch(fetchURL)
