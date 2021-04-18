@@ -20,16 +20,16 @@ const sortedCardDB = {
   G: [],
   colorless: [],
   multicolor: {
-    WU: [],
-    WB: [],
-    WR: [],
-    WG: [],
-    UB: [],
-    UR: [],
-    UG: [],
+    UW: [],
+    BU: [],
     BR: [],
+    GR: [],
+    GW: [],
+    BW: [],
+    RU: [],
     BG: [],
-    RG: [],
+    RW: [],
+    GU: [],
     other: [],
   },
   land: [],
@@ -57,7 +57,7 @@ const sortCards = (card) => {
         sortedCardDB[card.color_identity[0]].push(card);
         break;
       case 2:
-        // TODO: this
+        sortedCardDB.multicolor[card.color_identity.join('')].push(card);
         break;
       case 3:
       case 4:
@@ -95,6 +95,19 @@ const getRandomCards = (list, n) => {
   return randomNums.map((randomNum) => list[randomNum]);
 };
 
+const getRandomMulticolorCards = (n) => [
+  ...getRandomCards(sortedCardDB.multicolor.UW, n),
+  ...getRandomCards(sortedCardDB.multicolor.BU, n),
+  ...getRandomCards(sortedCardDB.multicolor.BR, n),
+  ...getRandomCards(sortedCardDB.multicolor.GR, n),
+  ...getRandomCards(sortedCardDB.multicolor.GW, n),
+  ...getRandomCards(sortedCardDB.multicolor.BW, n),
+  ...getRandomCards(sortedCardDB.multicolor.RU, n),
+  ...getRandomCards(sortedCardDB.multicolor.BG, n),
+  ...getRandomCards(sortedCardDB.multicolor.RW, n),
+  ...getRandomCards(sortedCardDB.multicolor.GU, n),
+];
+
 fetch(scryfallJSON)
   .then((res) => res.json())
   .then((json) => {
@@ -112,12 +125,14 @@ app.get('/random-pool', (req, res) => {
     res.status(500).send({ error: { msg: 'Server has not finished started up.', type: 'SERVER_NOT_STARTED' } });
   } else {
     const cards = [
-      ...getRandomCards(sortedCardDB.W, 10),
-      ...getRandomCards(sortedCardDB.U, 10),
-      ...getRandomCards(sortedCardDB.B, 10),
-      ...getRandomCards(sortedCardDB.R, 10),
-      ...getRandomCards(sortedCardDB.G, 10),
+      ...getRandomCards(sortedCardDB.W, 20),
+      ...getRandomCards(sortedCardDB.U, 20),
+      ...getRandomCards(sortedCardDB.B, 20),
+      ...getRandomCards(sortedCardDB.R, 20),
+      ...getRandomCards(sortedCardDB.G, 20),
       ...getRandomCards(sortedCardDB.colorless, 10),
+      ...getRandomMulticolorCards(2),
+      ...getRandomCards(sortedCardDB.multicolor.other, 3),
       ...getRandomCards(sortedCardDB.land, 10),
     ].map(formatCardsAsJSON);
     res.send({ cards });
