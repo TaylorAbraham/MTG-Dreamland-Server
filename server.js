@@ -2,6 +2,22 @@ const express = require('express');
 const path = require('path');
 const fetch = require('node-fetch');
 const morgan = require('morgan');
+const firebase = require('firebase/app');
+require('firebase/firestore');
+
+// Non-secret firebase config for client
+const firebaseConfig = {
+  apiKey: 'AIzaSyCzN61HjMCG9zaGm3CsChrK-osbG0fgvxs',
+  authDomain: 'mtg-dreamland.firebaseapp.com',
+  projectId: 'mtg-dreamland',
+  storageBucket: 'mtg-dreamland.appspot.com',
+  messagingSenderId: '456002809510',
+  appId: '1:456002809510:web:5ba77345a05adc82a20e67',
+  measurementId: 'G-Q4KB78V40N',
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 const app = express();
 app.use(morgan('tiny'));
@@ -155,8 +171,37 @@ app.get('/random-pool', (req, res) => {
       ...getRandomMulticolorCards(2, true),
       ...getRandomCards(sortedCardDB.land.other, 5),
     ].map(formatCardsAsJSON);
-    res.send({ cards });
+
+    // Add this pool to firestore
+    db.collection('pools')
+      .add({
+        cards: JSON.stringify(cards),
+      })
+      .then((docRef) => {
+        console.log('Document written with ID: ', docRef.id);
+        res.send({ uuid: docRef.id, cards });
+      })
+      .catch((error) => {
+        console.error('Error adding document: ', error);
+      });
   }
+});
+
+app.get('/random-pool/:uuid', (req, res) => {
+  const docRef = db.collection('pools').doc(req.params.uuid);
+
+  docRef
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        res.send({ cards: JSON.parse(doc.data().cards) });
+      } else {
+        res.status(404).send({ error: { msg: `No such document with uuid ${req.params.uuid}`, type: 'NOT_FOUND' } });
+      }
+    })
+    .catch((error) => {
+      res.status(500).send({ error: { msg: `Error getting or parsing document: ${error}`, type: 'DOC_ERROR' } });
+    });
 });
 
 app.get('/test', (req, res) => {

@@ -1,15 +1,24 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import fetch from 'node-fetch';
 import { TextField, Snackbar, IconButton } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 import CloseIcon from '@material-ui/icons/Close';
+import { useParams } from 'react-router-dom';
 import './App.scss';
 
 const App = () => {
   const [cards, setCards] = useState([]);
+  const [poolUUID, setPoolUUID] = useState('');
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
 
+  const { uuid: uuidParam } = useParams();
+
   const fetchPool = useCallback(() => {
-    fetch('/random-pool')
+    let fetchURL = '/random-pool';
+    if (uuidParam) {
+      fetchURL = `/random-pool/${uuidParam}`;
+    }
+    fetch(fetchURL)
       .then((res) => res.json())
       .then((json) => {
         if (json.error) {
@@ -20,9 +29,12 @@ const App = () => {
           }
         } else {
           setCards(json.cards);
+          if (json.uuid) {
+            setPoolUUID(json.uuid);
+          }
         }
       });
-  }, []);
+  }, [uuidParam]);
 
   useEffect(() => {
     fetchPool();
@@ -35,23 +47,34 @@ const App = () => {
     setSnackbarOpen(false);
   };
 
+  const selectAllAndCopy = (e) => {
+    e.target.select(); // Highlight whole textarea on select
+    document.execCommand('copy');
+    setSnackbarOpen(true);
+  };
+
   return (
     <div className="App">
       {cards && (
         <>
+          {poolUUID && (
+            <TextField
+              className="pool-textbox"
+              label="URL"
+              variant="outlined"
+              value={`${window.location.href}${poolUUID}`}
+              onFocus={selectAllAndCopy}
+            />
+          )}
           <div>
             <TextField
-              className="cards-text"
+              className="pool-textbox"
               label="Cards"
               multiline
               rows={10}
               value={cards.map((card) => card.name).join('\n')}
               variant="outlined"
-              onFocus={(e) => {
-                e.target.select(); // Highlight whole textarea on select
-                document.execCommand('copy');
-                setSnackbarOpen(true);
-              }}
+              onFocus={selectAllAndCopy}
             />
           </div>
           {cards.map((card) => (
@@ -62,20 +85,19 @@ const App = () => {
           <Snackbar
             anchorOrigin={{
               vertical: 'top',
-              horizontal: 'left',
+              horizontal: 'center',
             }}
             open={snackbarOpen}
             autoHideDuration={4000}
             onClose={handleClose}
-            message="List copied to clipboard!"
-            action={
-              <>
-                <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </>
-            }
-          />
+          >
+            <MuiAlert elevation={6} variant="filled" severity="success">
+              Copied to clipboard!
+              <IconButton size="small" aria-label="close" color="inherit" onClick={handleClose}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </MuiAlert>
+          </Snackbar>
         </>
       )}
     </div>
