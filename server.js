@@ -3,7 +3,19 @@ const path = require('path');
 const fetch = require('node-fetch');
 const morgan = require('morgan');
 const firebase = require('firebase/app');
+const cors = require('cors');
 require('firebase/firestore');
+
+const allowedCORSDomains = ['http://localhost:3000', 'https://mtg-dreamland.herokuapp.com/'];
+const corsOptions = {
+  origin(origin, callback) {
+    if (allowedCORSDomains.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
 
 // Non-secret firebase config for client
 const firebaseConfig = {
@@ -20,8 +32,8 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 const app = express();
+app.use(cors(corsOptions));
 app.use(morgan('tiny'));
-app.use(express.static(path.join(__dirname, 'client/build/')));
 
 const scryfallBase = 'https://api.scryfall.com';
 const scryfallJSON = 'https://c2.scryfall.com/file/scryfall-bulk/oracle-cards/oracle-cards-20210406210457.json';
