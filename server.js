@@ -151,10 +151,6 @@ fetch(scryfallJSON)
     startingUp = false;
   });
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-
 app.get('/random-pool', (req, res) => {
   if (startingUp) {
     res.status(500).send({ error: { msg: 'Server has not finished started up.', type: 'SERVER_NOT_STARTED' } });
