@@ -175,7 +175,7 @@ app.get('/random-pool', (req, res) => {
       })
       .then((docRef) => {
         console.log('Document written with ID: ', docRef.id);
-        res.send({ uuid: docRef.id, cards });
+        res.send({ uuid: docRef.id, cards }); // Send the cards and the pool id
       })
       .catch((error) => {
         console.error('Error adding document: ', error);
