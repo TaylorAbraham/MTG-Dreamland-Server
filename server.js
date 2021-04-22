@@ -168,12 +168,12 @@ app.get('/random-pool', (req, res) => {
     res.status(500).send({ error: { msg: 'Server has not finished started up.', type: 'SERVER_NOT_STARTED' } });
   } else {
     const cards = [
-      ...getRandomCards(sortedCardDB.W, 20),
-      ...getRandomCards(sortedCardDB.U, 20),
-      ...getRandomCards(sortedCardDB.B, 20),
-      ...getRandomCards(sortedCardDB.R, 20),
-      ...getRandomCards(sortedCardDB.G, 20),
-      ...getRandomCards(sortedCardDB.colorless, 10),
+      ...getRandomCards(sortedCardDB.W, 15),
+      ...getRandomCards(sortedCardDB.U, 15),
+      ...getRandomCards(sortedCardDB.B, 15),
+      ...getRandomCards(sortedCardDB.R, 15),
+      ...getRandomCards(sortedCardDB.G, 15),
+      ...getRandomCards(sortedCardDB.colorless, 6),
       ...getRandomMulticolorCards(2),
       ...getRandomCards(sortedCardDB.multicolor.other, 3),
       ...getRandomMulticolorCards(2, true),
