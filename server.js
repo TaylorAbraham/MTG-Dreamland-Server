@@ -6,7 +6,11 @@ const firebase = require('firebase/app');
 const cors = require('cors');
 require('firebase/firestore');
 
-const allowedCORSDomains = ['http://localhost:3000', 'https://mtg-dreamland.herokuapp.com'];
+const allowedCORSDomains = [
+  'http://localhost:3000',
+  'https://mtg-dreamland.xyz',
+  'https://mtg-dreamland.herokuapp.com',
+];
 const corsOptions = {
   origin(origin, callback) {
     if (allowedCORSDomains.indexOf(origin) !== -1) {
