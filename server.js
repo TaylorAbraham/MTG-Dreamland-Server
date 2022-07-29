@@ -10,6 +10,7 @@ const allowedCORSDomains = [
   'http://localhost:3000',
   'https://mtg-dreamland.xyz',
   'https://mtg-dreamland.herokuapp.com',
+  'https://mtg-dreamland.netlify.app',
 ];
 const corsOptions = {
   origin(origin, callback) {
