@@ -39,7 +39,7 @@ app.use(cors(corsOptions));
 app.use(morgan('tiny'));
 
 const scryfallBase = 'https://api.scryfall.com';
-const scryfallJSON = 'https://c2.scryfall.com/file/scryfall-bulk/oracle-cards/oracle-cards-20210406210457.json';
+const scryfallJSON = 'https://data.scryfall.io/oracle-cards/oracle-cards-20250929090303.json';
 
 let startingUp = true;
 let cardDB = [];
